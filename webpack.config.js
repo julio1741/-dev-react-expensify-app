@@ -1,5 +1,16 @@
 const path = require('path');
+const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+
+process.env.NODE = process.env.NODE_ENV || 'development';
+
+if (process.env.ENV_NODE === 'test') {
+    require('dotenv').config({path: '.env.test'});
+}else if (process.env.ENV_NODE === 'development') {
+    require('dotenv').config({path: '.env.development'});
+}
+//process.env.NODE_ENV
 
 module.exports = (env) => {
     const isProduction = env === 'production';
@@ -37,7 +48,15 @@ module.exports = (env) => {
             }]
         },
         plugins: [
-            CSSExtract
+            CSSExtract,
+            new webpack.DefinePlugin({
+                'process.env.FIREBASE_API_KEY': JSON.stringify(process.env.FIREBASE_API_KEY),
+                'process.env.FIREBASE_AUTH_DOMAIN': JSON.stringify(process.env.FIREBASE_AUTH_DOMAIN),
+                'process.env.FIREBASE_DATABASE_URL': JSON.stringify(process.env.FIREBASE_DATABASE_URL),
+                'process.env.FIREBASE_PROJETC_ID': JSON.stringify(process.env.FIREBASE_PROJETC_ID),
+                'process.env.FIREBASE_STORAGE_BUCKET': JSON.stringify(process.env.FIREBASE_STORAGE_BUCKET),
+                'process.env.FIREBASE_MESSAGING_SENDER_ID': JSON.stringify(process.env.FIREBASE_MESSAGING_SENDER_ID)
+            })
         ],
         devtool: isProduction ? 'source-map' : 'inline-source-map',
         devServer: {
